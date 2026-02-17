@@ -32,11 +32,12 @@ runs:
 
     # Initialize the deploy session
     - id: start-deploy-session
+      env:
+        DAGSTER_CLOUD_URL: ${{ inputs.dagster_cloud_url }}
       run: >
         $DAGSTER_CLOUD_PEX -m dagster_dg_cli.cli.entrypoint plus deploy start
         --target-path=${{ inputs.project_dir }}
         --deployment=${{ inputs.deployment }}
-        --url=${{ inputs.dagster_cloud_url }}
         --status-url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         --git-url=${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         --commit-hash=${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
