@@ -33,9 +33,11 @@ runs:
     # Initialize the deploy session
     - id: start-deploy-session
       env:
+        DG_CLOUD_URL: ${{ inputs.dagster_cloud_url }}
         DAGSTER_CLOUD_URL: ${{ inputs.dagster_cloud_url }}
       run: >
         $DAGSTER_CLOUD_PEX -m dagster_dg_cli.cli.entrypoint plus deploy start
+        --cloud-url=${{ inputs.dagster_cloud_url }}
         --target-path=${{ inputs.project_dir }}
         --deployment=${{ inputs.deployment }}
         --status-url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
