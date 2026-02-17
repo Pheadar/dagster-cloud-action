@@ -4,10 +4,20 @@ inputs:
   command:
     required: true
     description: "The dagster-cloud cli command to run"
+  cloud_region:
+    required: false
+    default: 'us'
+    description: 'Cloud region (us/eu)'
 
 runs:
   using: "composite"
   steps:
     - id: dagster-cloud-cli
-      run: $GITHUB_ACTION_PATH/../../../generated/gha/dagster-cloud.pex -m dagster_cloud_cli.entrypoint ${{ inputs.command }}
+      run: |
+        if [ "${{ inputs.cloud_region }}" = "eu" ]; then
+          export DAGSTER_CLOUD_URL="${DAGSTER_CLOUD_URL:-https://${DAGSTER_CLOUD_ORGANIZATION}.eu.dagster.cloud}"
+        else
+          export DAGSTER_CLOUD_URL="${DAGSTER_CLOUD_URL:-https://${DAGSTER_CLOUD_ORGANIZATION}.dagster.cloud}"
+        fi
+        $GITHUB_ACTION_PATH/../../../generated/gha/dagster-cloud.pex -m dagster_cloud_cli.entrypoint ${{ inputs.command }}
       shell: bash
